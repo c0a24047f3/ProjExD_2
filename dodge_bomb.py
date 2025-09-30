@@ -46,6 +46,8 @@ def main():
             if event.type == pg.QUIT: 
                 return
         screen.blit(bg_img, [0, 0]) 
+        if kk_rct.colliderect(bb_rct):# こうかとんと爆弾の衝突の判定
+            return
 
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
@@ -69,7 +71,7 @@ def main():
         if not yoko:#横方向にはみ出ていたら
             vx *= -1
         if not tate:
-            vy *= -2
+            vy *= -1
         bb_rct.move_ip(vx,vy) #爆弾を動かす
         screen.blit(bb_img, bb_rct)  
         pg.display.update()
