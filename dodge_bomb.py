@@ -9,7 +9,7 @@ DELTA = {pg.K_UP:(0,-5), pg.K_DOWN:(0,+5), pg.K_LEFT:(-5,0), pg.K_RIGHT:(+5,0)}
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-def check_bound(rct :pg.Rect) ->tuple[bool, bool]:
+def check_bound(rct :pg.Rect) ->tuple[bool, bool]: #爆弾が当たっている判定
     """
 
     引数:
@@ -22,7 +22,7 @@ def check_bound(rct :pg.Rect) ->tuple[bool, bool]:
     tate = True
     if rct.left < 0 or WIDTH < rct.right: #横にはみ出ていたらのif
         yoko = False
-    if rct.top < 0 or HEIGHT < rct.bottom:
+    if rct.top < 0 or HEIGHT < rct.bottom:#縦にはみ出ていたらif
         tate = False
     return yoko,tate
 
@@ -45,7 +45,12 @@ def gameover(screen: pg.Surface) -> None:
     pg.display.update()
     time.sleep(5)
 
-def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:# 爆弾を拡大と加速
+    """
+
+    Returns:
+        tuple[list[pg.Surface], list[int]]: 拡大と加速のタプル
+    """
     bb_imgs = []
     bb_accs = [a for a in range(1, 11)]
     for r in range(1, 11):
@@ -55,7 +60,12 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
         bb_imgs.append(bb_img)
     return bb_imgs,bb_accs
 
-def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
+def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:#こうかとんの移動方向へ向く
+    """
+
+    Returns:
+        dict[tuple[int, int], pg.Surface]: 移動方向の辞書
+    """
     kk_img = pg.image.load("fig/3.png")
     rotozoom = pg.transform.rotozoom
     kk_dict = {
@@ -70,6 +80,10 @@ def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
     (+5,+5): rotozoom(kk_img, 45, 1.0) # 右下
     }
     return kk_dict
+
+def semaku() -> tuple[list[int]]:
+    screen_dec = [a for a in range(1, 10)]
+    return screen_dec
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -88,6 +102,7 @@ def main():
     clock = pg.time.Clock()
     tmr = 0
     bb_imgs,bb_accs = init_bb_imgs()
+    screen_dec = semaku
     kk_imgs = get_kk_imgs()
     while True:
         for event in pg.event.get():
@@ -114,7 +129,6 @@ def main():
         #     sum_mv[0] += 5
         kk_rct.move_ip(sum_mv)
         kk_img = kk_imgs[tuple(sum_mv)]
-        print(sum_mv)
         if sum_mv == [+5, 0] or sum_mv == [+5, -5] or sum_mv == [0, -5] or sum_mv == [0, +5]:
             kk_img = pg.transform.flip(kk_img, False, True)
         elif sum_mv == [+5, +5]:
@@ -131,6 +145,9 @@ def main():
         avy = vy*bb_accs[min(tmr//500, 9)] #y軸の加速
         bb_rct.move_ip(avx,avy) #爆弾を動かす
         bb_img = bb_imgs[min(tmr//500, 9)]#大きさ
+        """WIDTH_af = WIDTH*screen_dec[9-tmr//500]/10
+        HEIGHT_af = HEIGHT*screen_dec[9-tmr//500]/10
+        screen = pg.display.set_mode((WIDTH_af, HEIGHT_af))"""#途中
         screen.blit(bb_img, bb_rct)
         pg.display.update()
         tmr += 1
