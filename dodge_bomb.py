@@ -4,9 +4,9 @@ import random
 import time
 import pygame as pg
 
+
 WIDTH, HEIGHT = 1100, 650
 DELTA = {pg.K_UP:(0,-5), pg.K_DOWN:(0,+5), pg.K_LEFT:(-5,0), pg.K_RIGHT:(+5,0)}
-
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 def check_bound(rct :pg.Rect) ->tuple[bool, bool]: #爆弾が当たっている判定
