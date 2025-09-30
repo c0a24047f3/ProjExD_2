@@ -1,6 +1,7 @@
 import os
 import sys
 import random
+import time
 import pygame as pg
 
 WIDTH, HEIGHT = 1100, 650
@@ -25,6 +26,25 @@ def check_bound(rct :pg.Rect) ->tuple[bool, bool]:
         tate = False
     return yoko,tate
 
+def gameover(screen: pg.Surface) -> None:
+    """
+
+    引数:
+        screen (pg.Surface): 画面(screen)
+    """
+    game_img = pg.Surface((1100, 650)) #空のサーフェス
+    pg.draw.rect(game_img, (0, 0, 0), (0, 0, 1100, 650))# 黒い四角形を作成
+    game_img.set_alpha(255) #黒画面の透明度
+    fonto = pg.font.Font(None, 80)#フォントを作成
+    img_cry = pg.image.load("fig/8.png")#画像を持ってくる
+    txt = fonto.render("Game Over", True, (255, 255, 255))
+    game_img.blit(txt, [400, 300])#文字
+    game_img.blit(img_cry, [355, 300])#左のこうかとん
+    game_img.blit(img_cry, [710,300])#右のこうかとん
+    screen.blit(game_img,[0, 0])  
+    pg.display.update()
+    time.sleep(5)
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -34,8 +54,8 @@ def main():
     kk_rct.center = 300, 200
     bb_img = pg.Surface((20,20)) #空のサーフェス
     pg.draw.circle(bb_img, (255,0,0), (10,10), 10) #爆弾イメージ　赤い円
-    bb_img.set_colorkey((0,0,0))
-    bb_rct = bb_img.get_rect() #黒い枠をなくす
+    bb_img.set_colorkey((0,0,0)) #黒い枠をなくす
+    bb_rct = bb_img.get_rect() 
     bb_rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT) #爆弾の座標　画面がずれてもWIDTHとHEIGHTを使用することで画面外に出ない
     vx = +5
     vy = +5
@@ -47,6 +67,7 @@ def main():
                 return
         screen.blit(bg_img, [0, 0]) 
         if kk_rct.colliderect(bb_rct):# こうかとんと爆弾の衝突の判定
+            gameover(screen)
             return
 
         key_lst = pg.key.get_pressed()
