@@ -1,7 +1,7 @@
 import os
 import sys
+import random
 import pygame as pg
-
 
 WIDTH, HEIGHT = 1100, 650
 DELTA = {pg.K_UP:(0,-5), pg.K_DOWN:(0,+5), pg.K_LEFT:(-5,0), pg.K_RIGHT:(+5,0)}
@@ -16,6 +16,13 @@ def main():
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
+    bb_img = pg.Surface((20,20)) #空のサーフェス
+    pg.draw.circle(bb_img, (255,0,0), (10,10), 10) #爆弾イメージ　赤い円
+    bb_img.set_colorkey((0,0,0))
+    bb_rct = bb_img.get_rect() #黒い枠をなくす
+    bb_rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT) #爆弾の座標　画面がずれてもWIDTHとHEIGHTを使用することで画面外に出ない
+    vx = +5
+    vy = +5
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -29,7 +36,7 @@ def main():
         for key,my in DELTA.items():
             if key_lst[key]:
                 sum_mv[0] += my[0]
-                sum_mv[0] += my[0]
+                sum_mv[1] += my[1]
         # if key_lst[pg.K_UP]:
         #     sum_mv[1] -= 5
         # if key_lst[pg.K_DOWN]:
@@ -39,6 +46,8 @@ def main():
         # if key_lst[pg.K_RIGHT]:
         #     sum_mv[0] += 5
         kk_rct.move_ip(sum_mv)
+        bb_rct.move_ip(vx,vy) #爆弾を動かす
+        screen.blit(bb_img, bb_rct)        
         screen.blit(kk_img, kk_rct)
         pg.display.update()
         tmr += 1
